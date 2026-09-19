@@ -9,7 +9,11 @@ file(GLOB_RECURSE ENGINE_HEADERS
 
 add_library(MomentumEngine STATIC
         ${ENGINE_SOURCES}
-        ${ENGINE_HEADERS} )
+        ${ENGINE_HEADERS}
+        EventBase.h
+        Events/ApplicationEvents.h
+        Events/KeyboardEvents.h
+        Events/MouseEvents.h)
 
 target_include_directories(MomentumEngine
         PUBLIC

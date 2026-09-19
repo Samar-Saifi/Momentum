@@ -4,7 +4,10 @@
 
 #ifndef MOMENTUM_WINDOW_H
 #define MOMENTUM_WINDOW_H
+#include <functional>
 #include <string>
+
+#include "EventBase.h"
 
 struct GLFWwindow;
 
@@ -23,18 +26,25 @@ public:
 
     void OnUpdate();
 
-    int GetWidth() const {return m_Width;};
-    int GetHeight() const {return m_Height;};
-    GLFWwindow* GetWindow() {return m_Window;};
+    int GetWidth() const {return m_Data.width;}
+    int GetHeight() const {return m_Data.height;}
+    GLFWwindow* GetWindow() const {return m_Window;}
+
+    void SetEventCallback(const std::function<void(EventBase&)>& callback){m_Data.eventCallback = callback;};
 
 private:
     void Init(const WindowProperties& properties);
     void Shutdown();
 
-    GLFWwindow* m_Window;
-    std::string m_WindowTitle;
-    int m_Width;
-    int m_Height;
+    GLFWwindow* m_Window = nullptr;
+    struct  WindowData {
+        std::string title;
+        int width;
+        int height;
+        std::function<void(EventBase&)> eventCallback;
+    };
+
+    WindowData m_Data;
 };
 
 
