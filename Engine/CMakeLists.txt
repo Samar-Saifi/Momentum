@@ -7,13 +7,32 @@ file(GLOB_RECURSE ENGINE_HEADERS
         "*.h"
 )
 
+add_library(imgui STATIC
+        ${imgui_SOURCE_DIR}/imgui.cpp
+        ${imgui_SOURCE_DIR}/imgui_draw.cpp
+        ${imgui_SOURCE_DIR}/imgui_tables.cpp
+        ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+
+        ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+        ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+target_include_directories(imgui
+        PUBLIC
+        ${imgui_SOURCE_DIR}
+        ${imgui_SOURCE_DIR}/backends
+)
+
 add_library(MomentumEngine STATIC
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
         EventBase.h
         Events/ApplicationEvents.h
         Events/KeyboardEvents.h
-        Events/MouseEvents.h)
+        Events/MouseEvents.h
+        ImGuiManager.cpp
+        ImGuiManager.h
+        DeltaTime.h)
 
 target_include_directories(MomentumEngine
         PUBLIC
@@ -21,9 +40,15 @@ target_include_directories(MomentumEngine
         ${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include
 )
 
+target_compile_definitions(MomentumEngine
+        PUBLIC
+        GLFW_INCLUDE_NONE
+)
+
 target_link_libraries(MomentumEngine
         PUBLIC
         glfw
         glm::glm
+        imgui
         ${CMAKE_DL_LIBS}
 )

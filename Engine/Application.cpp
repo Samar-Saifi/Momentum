@@ -9,6 +9,8 @@
 #include "Window.h"
 #include <glad/glad.h>
 
+#include "DeltaTime.h"
+#include "ImGuiManager.h"
 #include "GLFW/glfw3.h"
 
 Application* Application::s_Instance = nullptr;
@@ -24,6 +26,10 @@ Application::Application(const std::string& name) {
     m_Window->SetEventCallback([this](EventBase& e) {
         OnEvent(e);
     });
+
+    m_ImGuiManager = std::make_unique<ImGuiManager>();
+    m_ImGuiManager->Init(m_Window->GetWindow());
+
     std::cout << "MOMEMTUM INITIALIZED SUCCESSFULLY" << std::endl;
 }
 
@@ -35,6 +41,10 @@ void Application::OnEvent(EventBase &event) {
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) {return OnWindowClose(e);});
     dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) { return OnWindowResize(e);});
+
+    if (!event.handled && m_ImGuiManager) {
+        m_ImGuiManager->OnEvent(event);
+    }
 }
 
 bool Application::OnWindowClose(WindowCloseEvent& e) {
@@ -47,6 +57,7 @@ bool Application::OnWindowResize(WindowResizeEvent& e) {
         m_Minimized = true;
         return false;
     }
+    m_Minimized = false;
     glViewport(0, 0, e.GetWidth(), e.GetHeight());
     return false;
 }
@@ -57,22 +68,38 @@ void Application::Run() {
     m_LastFrameTime = static_cast<float>(glfwGetTime());
 
     while (m_Running) {
-        OnUpdate();
+        float time = static_cast<float>(glfwGetTime());
+        DeltaTime dt = time-m_LastFrameTime;
+        m_LastFrameTime = time;
+        OnProcessInput();
+        if (!m_Minimized) {
+            m_Timer += dt.GetSeconds();
+            while (m_Timer > m_FixedDeltaTime) {
+                OnFixedUpdate(m_FixedDeltaTime);
+                m_Timer -= m_FixedDeltaTime;
+            }
 
-        while (m_Running) {
-
-            OnUpdate();
+            OnUpdate(dt);
 
             glClearColor(0.1f, 0.12f, 0.15f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            m_Window->OnUpdate();
+            OnRender();
+
+            if (m_ImGuiManager) {
+                m_ImGuiManager->Begin();
+                OnRenderImGui();
+                m_ImGuiManager->End();
+            }
         }
-
-        OnShutdown();
+        m_Window->OnUpdate();
     }
+    OnShutdown();
 }
 
 Application::~Application() {
+    if (m_ImGuiManager) {
+        m_ImGuiManager->Shutdown();
+    }
     s_Instance = nullptr;
 }

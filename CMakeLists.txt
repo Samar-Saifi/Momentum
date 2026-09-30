@@ -28,6 +28,17 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
+#ImGui
+FetchContent_Declare(
+        imgui
+        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_TAG        docking
+        GIT_SHALLOW    TRUE
+)
+FetchContent_GetProperties(imgui)
+if(NOT imgui_POPULATED)
+    FetchContent_Populate(imgui)
+endif()
 
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)

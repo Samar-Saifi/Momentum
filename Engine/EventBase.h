@@ -35,6 +35,10 @@ public:
     virtual EventType GetEventType() const = 0;
     virtual EventGroup GetGroup() const = 0;
     virtual const char* GetName() const = 0;
+
+    bool IsKeyboardEvent() { return GetGroup() == EventGroup::Keyboard; }
+    bool IsMuseEvent() { return GetGroup() == EventGroup::Mouse; }
+    bool IsApplicationEvent() { return GetGroup() == EventGroup::Application; }
 };
 
 class EventDispatcher {
