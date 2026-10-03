@@ -1,8 +1,10 @@
+#include <filesystem>
 #include <iostream>
-
 #include "Application.h"
 #include "../cmake-build-debug/_deps/imgui-src/imgui.h"
-#include <glad/glad.h>
+
+#include "Renderer.h"
+#include "glm/ext/matrix_transform.hpp"
 
 class SandboxApp : public Application {
 public:
@@ -10,6 +12,35 @@ public:
 
     void OnStart() override {
         std::cout << "Sandbox started.\n";
+        Renderer::Init();
+
+        m_Shader = std::make_shared<Shader>("../../Engine/Shaders/vert.shader", "../../Engine/Shaders/frag.shader");
+
+        float vertices[] = {
+            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  0.2f, 0.2f, 0.2f, 1.0f
+        };
+
+        unsigned int indices[] = {
+            0, 1, 2,  2, 3, 0,
+            1, 5, 6,  6, 2, 1,
+            5, 4, 7,  7, 6, 5,
+            4, 0, 3,  3, 7, 4,
+            3, 2, 6,  6, 7, 3,
+            4, 5, 1,  1, 0, 4
+        };
+
+        m_VA = std::make_shared<VertexArray>();
+
+        std::shared_ptr<VertexBuffer> vb = std::make_shared<VertexBuffer>(vertices, sizeof(vertices));
+        std::shared_ptr<IndexBuffer> ib = std::make_shared<IndexBuffer>(indices, sizeof(indices) / sizeof(unsigned int));
+        m_VA->SetBuffer(vb, ib, 7 * sizeof(float));
     }
 
     void OnProcessInput() override {m_ProcessedFrames++;}
@@ -22,11 +53,15 @@ public:
             m_FrameTimer = 0;
             m_FrameCount = 0;
         }
+
+        m_RotationAngle += dt.GetSeconds() * 50.0f;
     }
 
     void OnRender() override {
-        glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Renderer::Clear(m_ClearColor);
+        m_Shader->Bind();
+        glm::mat4 rotationTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_RotationAngle), glm::vec3(0.0f, 1.0f, 1.0f));
+        Renderer::Draw(m_VA, m_Shader, rotationTransform);
     }
 
     void OnRenderImGui() override {
@@ -46,7 +81,7 @@ public:
             SetFixedDeltaTime(1.0f / static_cast<float>(targetHz));
         }
 
-        ImGui::End();`
+        ImGui::End();
     }
 
     void OnEvent(EventBase &e) override {
@@ -63,7 +98,7 @@ public:
     }
 
 private:
-    float m_ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    glm::vec4 m_ClearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
     unsigned int m_FixedUpdateCount = 0;
     unsigned int m_ProcessedFrames = 0;
     float m_FixedTotalTime = 0;
@@ -71,6 +106,10 @@ private:
     int m_FPS = 0;
     unsigned int m_FrameCount = 0;
     float m_LastDeltaTime = 0;
+    float m_RotationAngle = 0.0f;
+
+    std::shared_ptr<Shader> m_Shader;
+    std::shared_ptr<VertexArray> m_VA;
 };
 
 int main() {

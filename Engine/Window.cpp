@@ -5,7 +5,6 @@
 #include "Window.h"
 
 #include <iostream>
-
 #include "glad/glad.h"
 #include  <GLFW/glfw3.h>
 
@@ -42,7 +41,7 @@ void Window::Init(const WindowProperties& props) {
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     m_Window = glfwCreateWindow(props.width, props.height, props.title.c_str(), nullptr, nullptr);
@@ -51,6 +50,12 @@ void Window::Init(const WindowProperties& props) {
 
     int version = gladLoadGL();
     if (!version) { return; }
+
+    GLint major, minor;
+    glGetIntegerv(GL_MAJOR_VERSION, &major);
+    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    std::cout << "OpenGL version: " << major << "." << minor << "\n";
+
 
     glfwSetWindowUserPointer(m_Window, &m_Data);
 

@@ -1,10 +1,12 @@
 file(GLOB_RECURSE ENGINE_SOURCES
         "*.cpp"
+        "Events/*.cpp"
         "external/glad/src/glad.c"
 )
 
 file(GLOB_RECURSE ENGINE_HEADERS
         "*.h"
+        "Events/*.h"
 )
 
 add_library(imgui STATIC
@@ -26,13 +28,7 @@ target_include_directories(imgui
 add_library(MomentumEngine STATIC
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
-        EventBase.h
-        Events/ApplicationEvents.h
-        Events/KeyboardEvents.h
-        Events/MouseEvents.h
-        ImGuiManager.cpp
-        ImGuiManager.h
-        DeltaTime.h)
+)
 
 target_include_directories(MomentumEngine
         PUBLIC
