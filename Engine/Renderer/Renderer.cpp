@@ -20,7 +20,7 @@ void Renderer::Clear(glm::vec4 color) {
 }
 
 void Renderer::Draw(const std::shared_ptr<VertexArray>& va, const std::shared_ptr<Shader>& shader, const glm::mat4 &transform) {
-    shader->SetMat4("transform", transform);
+    shader->SetMat4("u_Transform", transform);
     shader->Bind();
     va->Bind();
 

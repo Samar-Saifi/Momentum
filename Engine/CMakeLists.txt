@@ -28,6 +28,10 @@ target_include_directories(imgui
 add_library(MomentumEngine STATIC
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
+        Mesh.h
+        Input.h
+        Texture.cpp
+        Texture.h
 )
 
 target_include_directories(MomentumEngine

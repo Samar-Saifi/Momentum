@@ -18,6 +18,7 @@ public:
 
     void SetMat4(const std::string& name, const glm::mat4& mat);
     void SetVec4(const std::string& name, glm::vec4& vec);
+    void SetVec3(const std::string& name, glm::vec3& vec);
 
 private:
     unsigned int m_ID = 0;
