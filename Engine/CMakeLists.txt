@@ -28,16 +28,14 @@ target_include_directories(imgui
 add_library(MomentumEngine STATIC
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
-        Mesh.h
-        Input.h
-        Texture.cpp
-        Texture.h
 )
 
 target_include_directories(MomentumEngine
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include
+        ${stb_SOURCE_DIR}
+        ${tinygltf_SOURCE_DIR}
 )
 
 target_compile_definitions(MomentumEngine

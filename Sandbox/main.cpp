@@ -4,57 +4,55 @@
 #include "Application.h"
 #include "Camera.h"
 #include "Input.h"
-#include "Material.h"
-#include "Mesh.h"
-#include "Texture.h"
+#include "../Engine/Renderer/Material.h"
+#include "../Engine/Renderer/Mesh.h"
 #include "Window.h"
 #include "../cmake-build-debug/_deps/imgui-src/imgui.h"
 
 #include "../Engine/Renderer/Renderer.h"
 #include "glm/ext/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "Renderer/PrimitiveShapes.h"
+
+struct SceneObject {
+    std::string name;
+    std::shared_ptr<Mesh> mesh;
+    glm::vec3 postion = glm::vec3(0.0f);
+    glm::vec3 scale = glm::vec3(1.0f);
+    glm::vec3 rotation = glm::vec3(0.0f);
+    glm::vec4 color = glm::vec4(1.0f);
+};
 
 class SandboxApp : public Application {
 public:
     SandboxApp() : Application() {}
 
+    void AddCube(const std::string& name, glm::vec3 pos, glm::vec3 scale = glm::vec3(1.0f), glm::vec4 color = glm::vec4(1.0f)) {
+        SceneObject obj;
+        obj.name = name; obj.postion = pos; obj.color = color; obj.scale = scale;
+        obj.mesh = PrimitiveShapes::CreateCube(1.0, m_Material);
+        m_SceneObjects.push_back(obj);
+        m_SelectedObjectIndex = (int) m_SceneObjects.size() - 1;
+    }
+
     void OnStart() override {
         std::cout << "Sandbox started.\n";
         Renderer::Init();
 
-        // Input::BindKey("RotateLeft", GLFW_KEY_A);
-        // Input::BindKey("RotateRight", GLFW_KEY_B);
+        Input::BindKey("CameraZoomIn", GLFW_KEY_Q, "Gameplay");
+        Input::BindKey("CameraUp", GLFW_KEY_W, "Gameplay");
+        Input::BindKey("CameraZoomOut", GLFW_KEY_E, "Gameplay");
+        Input::BindKey("CameraDown", GLFW_KEY_S, "Gameplay");
+        Input::BindKey("CameraLeft", GLFW_KEY_A, "Gameplay");
+        Input::BindKey("CameraRight", GLFW_KEY_D, "Gameplay");
+        Input::BindKey("Jump", GLFW_KEY_SPACE, "Gameplay");
 
-        auto shader = std::make_shared<Shader>("../../Engine/Shaders/vert.shader", "../../Engine/Shaders/frag.shader");
-        std::shared_ptr<Material> mat = std::make_shared<Material>(shader);
 
-        m_Texture = std::make_unique<Texture>(64,64,0xFF00FFFF);
+        m_Shader = std::make_shared<Shader>("../../Engine/Shaders/vert.shader", "../../Engine/Shaders/frag.shader");
+        m_Material = std::make_shared<Material>(m_Shader);
 
-        float vertices[] = {
-            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        };
+        AddCube("RedCube", glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.2f), glm::vec4(0.85f, 0.25f, 0.25f, 1.0f));
 
-        unsigned int indices[] = {
-            0, 1, 2,  2, 3, 0,
-            1, 5, 6,  6, 2, 1,
-            5, 4, 7,  7, 6, 5,
-            4, 0, 3,  3, 7, 4,
-            3, 2, 6,  6, 7, 3,
-            4, 5, 1,  1, 0, 4
-        };
-
-        m_VA = std::make_shared<VertexArray>();
-
-        std::shared_ptr<VertexBuffer> vb = std::make_shared<VertexBuffer>(vertices, sizeof(vertices));
-        std::shared_ptr<IndexBuffer> ib = std::make_shared<IndexBuffer>(indices, sizeof(indices) / sizeof(unsigned int));
-        m_VA->SetBuffer(vb, ib, 5 * sizeof(float));
-        m_Mesh = std::make_unique<Mesh>(m_VA, mat);
         m_Camera = std::make_unique<Camera>();
     }
 
@@ -69,70 +67,89 @@ public:
             m_FrameCount = 0;
         }
 
-        // m_RotationAngle += dt.GetSeconds() * 50.0f;
-
-        auto window = GetWindow().GetWindow();
         float moveSpeed = 30 * dt.GetSeconds();
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            m_Camera->ZoomCamera(moveSpeed);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            m_Camera->ZoomCamera(-moveSpeed);
-        }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            m_Camera->RotateCamera(moveSpeed * 2, 0);
-        }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            m_Camera->RotateCamera(-moveSpeed * 2, 0);
-        }
+        if (Input::ActionPressed("CameraZoomIn")) {m_Camera->ZoomCamera(moveSpeed);}
+        if (Input::ActionPressed("CameraZoomOut")) {m_Camera->ZoomCamera(-moveSpeed);}
+        if (Input::ActionPressed("CameraLeft")) {m_Camera->RotateCamera(moveSpeed, 0.0f);}
+        if (Input::ActionPressed("CameraRight")) {m_Camera->RotateCamera(-moveSpeed, 0.0f);}
+        if (Input::ActionPressed("CameraDown")) {m_Camera->RotateCamera(0.0f, -moveSpeed);}
+        if (Input::ActionPressed("CameraUp")) {m_Camera->RotateCamera(0.0f, moveSpeed);}
     }
 
     void OnRender() override {
         Renderer::Clear(m_ClearColor);
-        if (m_Texture) m_Texture->Bind();
-        if (!m_Mesh || !m_Mesh->material) return;
-        m_Mesh->material->Bind();
-        auto shader = m_Mesh->material->GetShader();
-        if (!shader) return;
+
         float aspect = ((float)GetWindow().GetWidth()/(float)GetWindow().GetHeight());
         glm::mat4 vp = m_Camera->GetProjectionMatrix(aspect) * m_Camera->GetViewMatrix();
-        shader->SetMat4("u_VPMat", vp);
-        glm::vec3 lightDir = glm::vec3(0.2f,0.5f,1);
-        shader->SetVec3("u_LightDir", lightDir);
-        glm::vec4 whiteColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        shader->SetVec4("u_Color", whiteColor);
-        glm::mat4 rotationTransform = glm::rotate(glm::mat4(1.0f), glm::radians(m_RotationAngle), glm::vec3(0.0f, 1.0f, 1.0f));
-        Renderer::Draw(m_VA, shader, rotationTransform);
+
+        m_Shader->Bind();
+        m_Shader->SetMat4("u_VPMat", vp);
+        m_Shader->SetVec3("u_LightDir", glm::vec3(0.2f,0.5f,1));
+        m_Shader->SetVec4("u_Color", glm::vec4(1.0f));
+
+        for (const auto& obj : m_SceneObjects) {
+            if (!obj.mesh || !obj.mesh->vertexArray) continue;
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, obj.postion);
+            model = glm::rotate(model, glm::radians(glm::radians(obj.rotation.x)), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(glm::radians(obj.rotation.y)), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(glm::radians(obj.rotation.z)), glm::vec3(0.0f, 0.0f, 1.0f));
+
+            m_Material->SetColor(obj.color);
+            m_Material->Bind();
+
+            Renderer::Draw(obj.mesh->vertexArray, m_Shader, model);
+        }
     }
 
     void OnRenderImGui() override {
-        ImGui::Begin("Momentum Sandbox");
+        ImGui::Begin("Scene Manager & Shapes");
+        float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        ImGui::ColorEdit4("Clear Color", color);
+        ImGui::Separator();
 
-        ImGui::TextColored(ImVec4(0.4f, 0.8f, 1.0f, 1.0f), "Game Loop Execution Pipeline:");
-        ImGui::BulletText("1. ProcessInput  (Ticks: %llu)", m_ProcessedFrames);
-        ImGui::BulletText("2. FixedUpdate   (Ticks: %llu, Accum Time: %.2f s)", m_FixedUpdateCount, m_FixedTotalTime);
-        ImGui::BulletText("3. Update        (FPS: %d, Delta: %.2f ms)", m_FPS, m_LastDeltaTime);
-        ImGui::BulletText("4. Render        (Custom Viewport Clear Active)");
-        ImGui::BulletText("5. ImGuiRender   (Active Viewport UI)");
+        ImGui::Text("Add 3D Primitives:");
+        if (ImGui::Button("+ Cube")) AddCube("Cube_" + std::to_string(m_SceneObjects.size()), glm::vec3(0.0f, 0.5f, 0.0f));
         ImGui::Separator();
-        ImGui::SliderFloat("Rotation Angle", &m_RotationAngle, 0.0f, 360.0f);
-        ImGui::Separator();
-        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.4f, 1.0f), "Fixed Timestep Settings:");
-        int targetHz = static_cast<int>(1.0f / GetFixedDeltaTime());
-        if (ImGui::SliderInt("Fixed Physics Hz", &targetHz, 10, 240)) {
-            SetFixedDeltaTime(1.0f / static_cast<float>(targetHz));
+
+        ImGui::Text("Objects in Scene (%zu):", m_SceneObjects.size());
+        if (m_SceneObjects.empty()) {
+            ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.3f, 1.0f), "Scene is currently empty. Click a button above to add shapes!");
+        } else {
+            std::vector<const char*> itemNames;
+            for (const auto& obj : m_SceneObjects) {
+                itemNames.push_back(obj.name.c_str());
+            }
+
+            if (m_SelectedObjectIndex >= static_cast<int>(m_SceneObjects.size())) {
+                m_SelectedObjectIndex = static_cast<int>(m_SceneObjects.size() - 1);
+            }
+
+            ImGui::Combo("Select Object", &m_SelectedObjectIndex, itemNames.data(), static_cast<int>(itemNames.size()));
+
+            if (ImGui::Button("Delete Selected Object")) {
+                m_SceneObjects.erase(m_SceneObjects.begin() + m_SelectedObjectIndex);
+                if (m_SelectedObjectIndex > 0) m_SelectedObjectIndex--;
+            }
+
+            if (!m_SceneObjects.empty() && m_SelectedObjectIndex >= 0 && m_SelectedObjectIndex < static_cast<int>(m_SceneObjects.size())) {
+                SceneObject& sel = m_SceneObjects[m_SelectedObjectIndex];
+                ImGui::SeparatorText("Selected Object Properties");
+
+                char nameBuf[64];
+                strncpy(nameBuf, sel.name.c_str(), sizeof(nameBuf));
+                nameBuf[sizeof(nameBuf) - 1] = '\0';
+                if (ImGui::InputText("Name", nameBuf, sizeof(nameBuf))) {
+                    sel.name = nameBuf;
+                }
+
+                ImGui::DragFloat3("Position", glm::value_ptr(sel.postion), 0.1f);
+                ImGui::DragFloat3("Rotation (Deg)", glm::value_ptr(sel.rotation), 1.0f);
+                ImGui::DragFloat3("Scale", glm::value_ptr(sel.scale), 0.05f, 0.01f, 50.0f);
+                ImGui::ColorEdit4("Color", glm::value_ptr(sel.color));
+            }
         }
-
         ImGui::End();
-    }
-
-    void OnEvent(EventBase &e) override {
-        if (e.GetGroup() == EventGroup::Keyboard) {
-            std::cout << "[APP TRACE] Keyboard Event: " << e.GetName() << "\n";
-        } else if (e.GetGroup() == EventGroup::Mouse) {
-            std::cout << "[APP INFO] Mouse Event: " << e.GetName() << "\n";
-        }
-        Application::OnEvent(e);
     }
 
     void OnShutdown() override {
@@ -148,13 +165,15 @@ private:
     int m_FPS = 0;
     unsigned int m_FrameCount = 0;
     float m_LastDeltaTime = 0;
-    float m_RotationAngle = 0.0f;
 
     std::shared_ptr<VertexArray> m_VA;
 
-    std::unique_ptr<Texture> m_Texture;
-    std::unique_ptr<Mesh> m_Mesh;
+    std::shared_ptr<Shader> m_Shader;
+    std::shared_ptr<Material> m_Material;
     std::unique_ptr<Camera> m_Camera;
+
+    std::vector<SceneObject> m_SceneObjects;
+    int m_SelectedObjectIndex = -1;
 };
 
 int main() {

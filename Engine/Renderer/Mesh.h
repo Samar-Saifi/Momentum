@@ -6,7 +6,7 @@
 #define MOMENTUM_MESH_H
 #include <memory>
 
-#include "Renderer/VertexArray.h"
+#include "VertexArray.h"
 
 struct Mesh {
     std::shared_ptr<VertexArray> vertexArray;

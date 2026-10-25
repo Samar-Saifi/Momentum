@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="16" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="17" type="long" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
@@ -35,24 +35,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06e3ff35-e1a7-4dd3-8c8f-b513741d8024" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Engine/Camera.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Engine/Camera.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Engine/Mesh.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Engine/Texture.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Engine/Texture.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Momentum.iml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Input.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Renderer/ModelLoader.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Renderer/ModelLoader.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Renderer/PrimitiveShapes.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Renderer/PrimitiveShapes.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Renderer/Texture.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Engine/Renderer/Texture.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/Buffer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Buffer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/Buffer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Buffer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Application.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Engine/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/Renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Renderer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/Renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Renderer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/Shader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Shader.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/Shader.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Shader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Input.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Input.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Material.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Mesh.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Mesh.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Renderer/Shader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Shader.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Renderer/Shader.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/Shader.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Renderer/VertexArray.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/VertexArray.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Engine/Shaders/frag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Shaders/frag.shader" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Engine/Shaders/vert.shader" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Shaders/vert.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/VertexArray.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/VertexArray.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Engine/VertexArray.h" beforeDir="false" afterPath="$PROJECT_DIR$/Engine/Renderer/VertexArray.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Texture.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Engine/Texture.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Sandbox/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Sandbox/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -96,9 +99,9 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="3JSmmk09qLsIWdqKwWFRjzy32u0" />
-  <component name="ProjectStatusUIService"><![CDATA[{
-  "uiKindId": "Widget"
-}]]></component>
+  <component name="ProjectStatusUIService">{
+  &quot;uiKindId&quot;: &quot;Widget&quot;
+}</component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -139,11 +142,6 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Momentum">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Momentum" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Momentum" TARGET_NAME="Momentum" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/cmake-build-debug/Sandbox/Momentum">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -160,6 +158,11 @@
       </method>
     </configuration>
     <configuration name="Momentum" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Momentum" TARGET_NAME="Momentum" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/cmake-build-debug/Sandbox/Momentum">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>

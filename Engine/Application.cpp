@@ -11,6 +11,7 @@
 
 #include "DeltaTime.h"
 #include "ImGuiManager.h"
+#include "Input.h"
 #include "GLFW/glfw3.h"
 
 Application* Application::s_Instance = nullptr;
@@ -41,6 +42,8 @@ void Application::OnEvent(EventBase &event) {
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) {return OnWindowClose(e);});
     dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) { return OnWindowResize(e);});
+
+    Input::OnEvent(event);
 
     if (!event.handled && m_ImGuiManager) {
         m_ImGuiManager->OnEvent(event);
